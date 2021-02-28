@@ -6,11 +6,8 @@ import {
 function validateNode(thisClick, lastClick) {
     const thisNode = thisClick.get('node');
     const lastNode = lastClick ? lastClick.get('node') : {};
-    const thisPlayer = thisClick.get('player');
     const turnStart = thisClick.get('turnStart');
     const usedNodes = appStore.getUsed();
-
-    const thisTurn = thisClick.get('turn');
     const thisClickNo = thisClick.get('click');
 
     if (thisClickNo === 1) {
@@ -32,6 +29,9 @@ function validateNode(thisClick, lastClick) {
         return false;
     }
 
+    console.log('usedNodes: ', usedNodes.toJS());
+    console.log('Math.abs(thisNode.x - lastNode.x): ', Math.abs(thisNode.x - lastNode.x));
+    console.log('Math.abs(thisNode.y - lastNode.y): ', Math.abs(thisNode.y - lastNode.y));
     if(!turnStart && (Math.abs(thisNode.x - lastNode.x) === 1 || Math.abs(thisNode.y - lastNode.y) === 1)){
         return true;
     }

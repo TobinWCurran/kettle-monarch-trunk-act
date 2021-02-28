@@ -1,32 +1,9 @@
-import { List, Map } from 'immutable';
-
-import validateNode from './validateNode.js';
+import { List } from 'immutable';
 
 export default function initialize(){
     global.appStore = {
-        // _current: Map({
-        //     click: 0,
-        //     turn: 1,
-        //     node: null,
-        // }),
         _usedClicks: List(),
-        // currentMove: function(req) {
-        //     this._usedNodes = this._usedNodes.push(this._current);
-
-        //     this._current = this._handleMove(req);
-            
-        //     return this._current;
-        // },
-        // _handleMove: function(req){
-        //     const thisCLick = this._current.get('click') + 1;
-        //     const turn = this._current.get('turn');
-        //     const thisTurn = thisCLick%2 === 0 ? turn + 1 : turn;
-        //     return Map({
-        //         turn: thisTurn,
-        //         click: thisCLick,
-        //         node: req.body,
-        //     });
-        // },
+        _usedLines: List(),
         setCurrent: function(newCurrent) {
             this._current = newCurrent;
         },
@@ -36,16 +13,17 @@ export default function initialize(){
         getLast: function( i = 0 ) {
             return this._usedNodes.last(i);
         },
-        
-        // setLast: function(){
-
-        // },
-
         getUsed: function(){
             return this._usedClicks;
         },
         setUsed: function(usedClicks){
             this._usedClicks = usedClicks;
+        },
+        getUsedLines: function() {
+            return this._usedLines;
+        },
+        setUsedLines: function(usedLines) {
+            this._usedLines = usedLines;
         }
     };
 
