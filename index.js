@@ -27,13 +27,10 @@ app.get('/initialize', function (req, res) {
 });
 
 app.post('/error', function (req, res) {
-    console.log('error req: ', req.body);
     res.json('eror');
 });
 
 app.post('/node-clicked', function (req, res) {
-    // nodeClicked(req);
-    // console.log('node-clicked req.body: ', req.body);
     res.json(nodeClicked(req));
 });
 

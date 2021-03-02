@@ -17,6 +17,7 @@
             "error",
             "last"
         ],
+        "no-console": 1,
         "indent": [
             "error",
             4

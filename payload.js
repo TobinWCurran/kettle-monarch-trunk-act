@@ -1,21 +1,11 @@
 import resBody from './resBody.js';
 import resMessage from './resMessage.js';
 
-function payLoad(isValid, lastClick, thisPlayer, thisClick, thisClickNo, turnStart) {
+function payLoad(hasMoves, isValid, thisPlayer, thisClickNo, turnStart, line) {
     return {
-        msg: resMessage(isValid, thisClickNo, turnStart),
-        body: resBody(isValid, lastClick, thisPlayer, thisClick, thisClickNo, turnStart),
+        msg: resMessage(hasMoves, isValid, thisClickNo, turnStart),
+        body: resBody(hasMoves, isValid, thisPlayer, thisClickNo, turnStart, line),
     };
 }
 
 export default payLoad;
-
-
-// function payLoad(isValid, line, thisPlayer, thisClickNo, turnStart) {
-//     return {
-//         msg: resMessage(isValid, thisClickNo, turnStart),
-//         body: resBody(isValid, line, thisPlayer, thisClickNo, turnStart),
-//     };
-// }
-
-// export default payLoad;

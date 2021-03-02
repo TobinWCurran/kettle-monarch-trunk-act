@@ -3,37 +3,42 @@ import {
     usedIndex as index,
 } from './usedHelpers.js';
 
-function validateNode(thisClick, lastClick) {
-    const thisNode = thisClick.get('node');
-    const lastNode = lastClick ? lastClick.get('node') : {};
+
+import intersects from './intersects.js';
+
+function validateNode(thisClick, thisLine, thisNode) {
     const turnStart = thisClick.get('turnStart');
-    const usedNodes = appStore.getUsed();
+    const getUsedNodes = appStore.getUsedNodes.bind(appStore);
     const thisClickNo = thisClick.get('click');
+    const getUsedLines = appStore.getUsedLines.bind(appStore);
+    const usedLines = getUsedLines();
+    const usedNodes = getUsedNodes();
 
     if (thisClickNo === 1) {
         return true;
     }
 
     const isUsed = used(usedNodes, thisNode);
+
     const usedIndex = index(usedNodes, thisNode);
 
-    if (isUsed && usedNodes.get(usedIndex).get('isEndpoint') === true) {
-        return true;
-    }
-
-    if(turnStart && JSON.stringify(thisNode) !== JSON.stringify(lastNode)){
-        return false;
-    }
-
-    if(!turnStart && isUsed){
-        return false;
-    }
-
-    console.log('usedNodes: ', usedNodes.toJS());
-    console.log('Math.abs(thisNode.x - lastNode.x): ', Math.abs(thisNode.x - lastNode.x));
-    console.log('Math.abs(thisNode.y - lastNode.y): ', Math.abs(thisNode.y - lastNode.y));
-    if(!turnStart && (Math.abs(thisNode.x - lastNode.x) === 1 || Math.abs(thisNode.y - lastNode.y) === 1)){
-        return true;
+    if(turnStart){
+        if (isUsed && usedNodes.get(usedIndex).get('isEndpoint') === true) {
+            return true;
+        }
+        if(!isUsed){
+            return false;
+        }
+    }else {
+        if(isUsed){
+            return false;
+        }
+        if(usedLines.size === 0){
+            return true;
+        }
+        if(thisLine){
+            return !intersects(thisLine, usedLines);
+        }
     }
 
     return true;

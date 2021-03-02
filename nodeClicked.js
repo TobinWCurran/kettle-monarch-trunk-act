@@ -1,75 +1,77 @@
 import { Map } from 'immutable';
 
 import {
-    nodesMatch as match,
-} from './usedHelpers.js';
-
-import {
     setClickNo,
     setIsEndpoint,
-    setIsUsed,
-    setLastClick,
     setPlayer,
-    setThisPlayer,
-    setThisTurn,
     setTurnStart,
+    setTurn,
     setUsedIndex,
 } from './nodeClickedSetters.js';
 
+import remainingMoves from './remainingMoves.js';
+import line from './line.js';
 import payload from './payload.js';
 import validateNode from './validateNode.js';
 
 function nodeClicked(req){
     const { body: thisNode } = req;
-    const getUsed = appStore.getUsed.bind(appStore);
-    const setUsed = appStore.setUsed.bind(appStore);
+
+    const getUsedClicks = appStore.getUsedClicks.bind(appStore);
+    const setUsedClicks = appStore.setUsedClicks.bind(appStore);
+    const getUsedNodes = appStore.getUsedNodes.bind(appStore);
+    const setUsedNodes = appStore.setUsedNodes.bind(appStore);
+    const getUsedLines = appStore.getUsedLines.bind(appStore);
+    const setUsedLines = appStore.setUsedLines.bind(appStore);
     
-    let usedClicks = getUsed();
+    let usedClicks = getUsedClicks();
+    let usedNodes = getUsedNodes();
+    const usedLines = getUsedLines();
 
     const isFirstClick = Boolean(usedClicks.size === 0);
-    const isUsed = setIsUsed(isFirstClick, usedClicks, thisNode);
     
-    const lastClick = setLastClick(isFirstClick, usedClicks);
-    const thisClickNo = setClickNo(isFirstClick, lastClick);
-    const player = setPlayer(isFirstClick, lastClick);
-    const thisTurn = setThisTurn(thisClickNo, player);
-    const thisPlayer = setThisPlayer(thisTurn);
-    const turnStart = setTurnStart(thisClickNo);
+    const thisClickNo = setClickNo(usedClicks);
 
-    const usedIndex = setUsedIndex(isFirstClick, usedClicks, thisNode);
-    const usedTest = isUsed && usedClicks.get(usedIndex).get('node');
+    const turn = setTurn(thisClickNo, usedClicks);
 
-    if(isUsed && match(usedTest, thisNode)){
-        usedClicks = usedClicks.update(usedIndex, (i) => {
+    const turnStart = setTurnStart(usedClicks);
+
+    const usedIndex = setUsedIndex(isFirstClick, usedNodes, thisNode);
+
+    const thisLine = usedNodes.size === 0 ? null : line(usedNodes.last(), thisNode );
+
+    if(usedIndex > -1) {
+        usedNodes = usedNodes.update(usedIndex, (i) => {
             return i.set('isEndpoint', false);
         });
     }
 
-    // function isEndpoint(isFirstClick, turnStart){
-    //     if(isFirstClick){
-    //         return true;
-    //     }
-    //     if(turnStart){
-    //         return false;
-    //     }
-    //     return true;
-    // }
-
-    const thisClick = Map({
-        player: thisPlayer,
+    let thisClickResult = Map({
         turnStart: turnStart,
+        turn: turn,
         click: thisClickNo,
-        node: req.body,
+        hasMoves: true,
+    });
+
+    const thisNodeResult = Map({
+        node: thisNode,
         isEndpoint: setIsEndpoint(isFirstClick, turnStart),
     });
 
-    const isValid = validateNode(thisClick, lastClick);
+    const hasMoves = !turnStart && remainingMoves(usedNodes, thisNodeResult, thisLine);
 
+    thisClickResult = thisClickResult.set('hasMoves', turnStart);
+
+    const isValid = validateNode(thisClickResult, thisLine, thisNode);
+    
     if(isValid){
-        setUsed(usedClicks.push(thisClick));
+        thisClickResult = thisClickResult.set('player', setPlayer(thisClickNo, turn));
+        setUsedClicks(usedClicks.push(thisClickResult));
+        setUsedNodes(usedNodes.push(thisNodeResult));
+        !turnStart && setUsedLines(usedLines.push(thisLine));
     }
 
-    return payload(isValid, lastClick, thisPlayer, thisClick, thisClickNo, turnStart);
+    return payload(hasMoves, isValid, thisClickResult.get('player'), thisClickNo, turnStart, thisLine);
 }
 
 export default nodeClicked;

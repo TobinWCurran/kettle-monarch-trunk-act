@@ -1,56 +1,48 @@
+import {
+    checkIntersection,
+    colinearPointWithinSegment
+} from 'line-intersect';
+
 function intersects(thisLine, usedLines) {
     const usedLinesJS = usedLines.toJS();
 
-    const a = thisLine.start.x;
-    const b = thisLine.start.y;
-    const c = thisLine.end.x;
-    const d = thisLine.end.y;
+    const x1 = thisLine.start.x;
+    const y1 = thisLine.start.y;
+    const x2 = thisLine.end.x;
+    const y2 = thisLine.end.y;
+
+    const endPoint1Line1 = { x: thisLine.start.x, y: thisLine.start.y };
+    const endPoint2Lin1 = {x: thisLine.end.x, y: thisLine.end.y};
 
     let toReturn = false;
 
     for (let i = 0; i < usedLinesJS.length; i++) {
-        let p = usedLinesJS[i].start.x;
-        let q = usedLinesJS[i].start.y;
-        let r = usedLinesJS[i].end.x;
-        let s = usedLinesJS[i].end.y;
+        let x3 = usedLinesJS[i].start.x;
+        let y3 = usedLinesJS[i].start.y;
+        let x4 = usedLinesJS[i].end.x;
+        let y4 = usedLinesJS[i].end.y;
 
-        let det, gamma, lambda;
-        det = (c - a) * (s - q) - (r - p) * (d - b);
+        let thisIntersect = checkIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
 
-        if (det === 0) {
-            toReturn =  false;
-        } else {
-            lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
-            gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
-
-            toReturn = (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
-        }
-        if (toReturn === true){
-            break;
+        if(thisIntersect.type === 'none'){
+            toReturn = false;
+        }else if(thisIntersect.type === 'intersecting'){
+            if(JSON.stringify(thisIntersect.point) === JSON.stringify(endPoint1Line1)) {
+                toReturn = false;
+            }else{
+                toReturn = true;
+                break;
+            }
+        }else if(thisIntersect.type === 'colinear'){
+            if(colinearPointWithinSegment(endPoint2Lin1, x3, y3, x4, y4)){
+                toReturn = true;
+                break;
+            }else{
+                toReturn = false;
+            }
         }
     }
 
-    // return usedLines.toJS().reduce((acc, cur) => {
-    //     console.log('usedLines reduce cur: ', cur);
-    //     console.log('usedLines reduce acc: ', acc);
-    //     const p = cur.start.x;
-    //     const q = cur.start.y;
-    //     const r = cur.end.x;
-    //     const s = cur.end.y;
-
-    //     var det, gamma, lambda;
-    //     det = (c - a) * (s - q) - (r - p) * (d - b);
-    //     console.log('det: ', det);
-    //     if (det === 0) {
-    //         return false;
-    //     } else {
-    //         lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
-    //         console.log('lambda: ', lambda);
-    //         gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
-    //         console.log('gamma: ', gamma);
-    //         return Boolean((0 < lambda && lambda < 1) && (0 < gamma && gamma < 1));
-    //     }
-    // });
     return toReturn;
 }
 
