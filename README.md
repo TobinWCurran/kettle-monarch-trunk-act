@@ -23,7 +23,7 @@ Determines line segment colinearity and intersections.
 ### Development Dependencies
 - [eslint](https://eslint.org/)\
 Keeps the code reasonably clean.
-- [nodemon]()
+- [nodemon]()\
 Automatically restarts the node application when file changes are detected.
 
 ## Running the API application
