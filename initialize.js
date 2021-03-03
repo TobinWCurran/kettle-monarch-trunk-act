@@ -31,9 +31,6 @@ export default function initialize(){
         getAllNodes: function(){
             return this._allNodes;
         },
-        getLast: function( i = 0 ) {
-            return this._usedNodes.last(i);
-        },
         getUsedClicks: function(){
             return this._usedClicks;
         },
