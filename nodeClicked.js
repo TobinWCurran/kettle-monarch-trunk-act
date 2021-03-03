@@ -50,7 +50,6 @@ function nodeClicked(req){
         turnStart: turnStart,
         turn: turn,
         click: thisClickNo,
-        hasMoves: true,
     });
 
     const thisNodeResult = Map({
@@ -59,8 +58,6 @@ function nodeClicked(req){
     });
 
     const hasMoves = !turnStart && remainingMoves(usedNodes, thisNodeResult, thisLine);
-
-    thisClickResult = thisClickResult.set('hasMoves', turnStart);
 
     const isValid = validateNode(thisClickResult, thisLine, thisNode);
     
