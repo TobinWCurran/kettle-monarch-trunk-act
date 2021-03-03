@@ -3,6 +3,8 @@ import { Map } from 'immutable';
 import {
     setClickNo,
     setIsEndpoint,
+    setLastClick,
+    setLastTurn,
     setPlayer,
     setTurnStart,
     setTurn,
@@ -66,6 +68,10 @@ function nodeClicked(req){
         setUsedClicks(usedClicks.push(thisClickResult));
         setUsedNodes(usedNodes.push(thisNodeResult));
         !turnStart && setUsedLines(usedLines.push(thisLine));
+    } else {
+        thisClickResult = thisClickResult.set('player', setPlayer(setLastClick(usedClicks), setLastTurn(usedClicks)));
+        setUsedClicks(usedClicks.delete(-1));
+        setUsedNodes(usedNodes.delete(-1));
     }
 
     return payload(hasMoves, isValid, thisClickResult.get('player'), thisClickNo, turnStart, thisLine);

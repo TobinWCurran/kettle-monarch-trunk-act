@@ -1,7 +1,10 @@
 import { usedIndex } from './usedHelpers.js';
 
 function setClickNo(usedClicks) {
-    return usedClicks.size === 0 ? 1 : usedClicks.last().get('click') + 1;
+    if(usedClicks.size === 0){
+        return 1;
+    }
+    return usedClicks.last().get('click') + 1;
 }
 
 function setIsEndpoint(isFirstClick, turnStart) {
@@ -12,6 +15,14 @@ function setIsEndpoint(isFirstClick, turnStart) {
         return false;
     }
     return true;
+}
+
+function setLastClick(usedClicks){
+    return usedClicks.last().get('click');
+}
+
+function setLastTurn(usedClicks){
+    return usedClicks.last().get('turn');
 }
 
 function setPlayer(thisClickNo, turn) {
@@ -48,6 +59,8 @@ function setUsedIndex(isFirstClick, usedNodes, thisNode) {
 export {
     setClickNo,
     setIsEndpoint,
+    setLastClick,
+    setLastTurn,
     setPlayer,
     setTurnStart,
     setTurn,

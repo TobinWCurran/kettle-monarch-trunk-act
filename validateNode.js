@@ -1,6 +1,7 @@
 import {
     isUsed as used,
     usedIndex as index,
+    nodesMatch,
 } from './usedHelpers.js';
 
 
@@ -30,6 +31,9 @@ function validateNode(thisClick, thisLine, thisNode) {
             return false;
         }
     }else {
+        if(nodesMatch(usedNodes.last().get('node'), thisNode )){
+            return false;
+        }
         if(isUsed){
             return false;
         }
