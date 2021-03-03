@@ -19,7 +19,7 @@ app.use(json());
 
 app.get('/', (req, res) => {
     res.header();
-    res.send('Hello World!');
+    res.send('This is the API for a turn-based line game.');
 });
 
 app.get('/initialize', function (req, res) {
