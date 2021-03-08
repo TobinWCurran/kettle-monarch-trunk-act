@@ -7,46 +7,70 @@ import {
     nodesMatch,
 } from './usedHelpers.js';
 
-function getEndpoints(usedNodes, thisNode){
+function getEndpoints(usedNodes){
     let endPoints = List();
     usedNodes.forEach((i) => {
         if(i.get('isEndpoint') === true){
-            endPoints = endPoints.push(i.get('node'));
+            endPoints = endPoints.push(i);
         }
     });
-    endPoints = endPoints.push(thisNode);
+
     return endPoints;
 }
 
-function remainingMoves(usedNodes, thisNodeResult, thisLine) {
+function remainingMoves(usedNodes, thisNode) {
+    console.log('remainingMoves usedNodes: ', usedNodes.toJS());
+    
+    if(thisNode){
+        console.log('remainingMoves thisNode: ', thisNode.toJS());
+        usedNodes = usedNodes.push(thisNode);
+    }
+    
     const getUsedLines = appStore.getUsedLines.bind(appStore);
     let usedLines = getUsedLines();
-    usedLines = usedLines.push(thisLine);
 
     const getAllNodes = appStore.getAllNodes.bind(appStore);
     let allNodes = getAllNodes();
 
-    let endPoints = getEndpoints(usedNodes, thisNodeResult.get('node'));
+    let endPoints = getEndpoints(usedNodes);
+    
 
-    let validMoves = 0;
+    let validMoves = List();
 
-    endPoints.forEach((endPoint) => {
+    usedNodes.forEach((node) => {
         let foundIndex = allNodes.findIndex((i) => {
-            return nodesMatch(i, endPoint);
+            return nodesMatch(i.toJS(), node.get('node'));
         });
 
         allNodes = allNodes.delete(foundIndex);
+        
     });
+
+    console.log('remainingMoves endPoints: ', endPoints.toJS());
+    console.log('remainingMoves allNodes: ', allNodes.toJS());
 
     endPoints.forEach((endPoint) => {
         allNodes.forEach((node) => {
-            let thisLine = line(endPoint, node.toJS());
+            console.log('node: ', node.toJS());
+            console.log('endPoint: ', endPoint.toJS());
+            const thisNode = node.toJS();
+            const thisEndpoint = endPoint.get('node');
 
-            if (intersects(thisLine, usedLines) === false){
-                validMoves = validMoves + 1;
+            const is45 = Math.abs(thisEndpoint.x-thisNode.x) === Math.abs(thisEndpoint.y-thisNode.y);
+            const isHor = thisEndpoint.x === thisNode.x;
+            const isVert = thisEndpoint.y === thisNode.y;
+
+            let thisLine = line(thisEndpoint, thisNode);
+
+            if(is45 || isHor || isVert) {
+                if (intersects(thisLine, usedLines) === false){
+                    validMoves = validMoves.push(thisLine);
+                }
             }
+
         });
     });
+    console.log('remainingMoves validMoves: ', validMoves.toJS());
     return validMoves;
 }
 

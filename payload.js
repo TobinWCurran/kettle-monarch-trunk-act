@@ -1,10 +1,19 @@
 import resBody from './resBody.js';
 import resMessage from './resMessage.js';
 
-function payLoad(hasMoves, isValid, thisPlayer, thisClickNo, turnStart, line) {
+function payLoad(options) {
+    const {
+        movesRemain,
+        isValid,
+        player,
+        thisClickNo,
+        turnStart,
+        newLine
+    } = options;
+
     return {
-        msg: resMessage(hasMoves, isValid, thisClickNo, turnStart),
-        body: resBody(hasMoves, isValid, thisPlayer, thisClickNo, turnStart, line),
+        msg: resMessage(movesRemain, isValid, thisClickNo, turnStart),
+        body: resBody(movesRemain, isValid, player, thisClickNo, turnStart, newLine),
     };
 }
 

@@ -23,11 +23,14 @@ const allNodes = List([
 ]);
 
 export default function initialize(){
+    console.log('*************** INITIALIZE ****************');
     global.appStore = {
         _allNodes: allNodes,
         _usedClicks: List(),
         _usedLines: List(),
         _usedNodes: List(),
+        _validLines: List(),
+        _remainingMoves: List(),
         getAllNodes: function(){
             return this._allNodes;
         },
@@ -48,7 +51,16 @@ export default function initialize(){
         },
         setUsedLines: function(usedLines) {
             this._usedLines = usedLines;
-        }
+        },
+        getValidLines: function(){
+            return this._validLines;
+        },
+        getRemainingMoves: function(){
+            return this._remainingMoves;
+        },
+        setRemainingMoves: function(remainingMoves){
+            this._remainingMoves = remainingMoves;
+        },
     };
 
     return {

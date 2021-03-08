@@ -1,4 +1,4 @@
-function resMessage(hasMoves, isValid, thisClickNo, turnStart) {
+function resMessage(movesRemain, isValid, thisClickNo, turnStart) {
     const messages = {
         VALID_START_NODE: 'VALID_START_NODE',
         INVALID_START_NODE: 'INVALID_START_NODE',
@@ -8,7 +8,7 @@ function resMessage(hasMoves, isValid, thisClickNo, turnStart) {
         STATE_UPDATE: 'STATE_UPDATE',
     };
 
-    if(hasMoves === 0){
+    if(movesRemain === 0){
         return messages.GAME_OVER;
     }
 

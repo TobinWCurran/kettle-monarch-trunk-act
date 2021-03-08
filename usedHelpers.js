@@ -1,3 +1,17 @@
+function isEndpoint(usedNodes, thisNode){
+    let isEndpoint = false;
+
+    usedNodes.forEach((node) => {
+        if(nodesMatch(node.get('node'), thisNode)){
+            if( node.get('isEndpoint') === true) {
+                isEndpoint = true;
+            }
+        }
+    });
+
+    return isEndpoint;
+}
+
 function isUsed(usedNodes, thisNode){
     return usedIndex(usedNodes, thisNode) === -1 ? false : true;
 }
@@ -13,6 +27,7 @@ function nodesMatch(node1, node2){
 }
 
 export {
+    isEndpoint,
     isUsed,
     nodesMatch,
     usedIndex,

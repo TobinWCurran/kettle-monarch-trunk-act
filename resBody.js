@@ -1,4 +1,6 @@
-function resBody(hasMoves, isValid, thisPlayer, thisClickNo, turnStart, line) {
+function resBody(movesRemain, isValid, thisPlayer, thisClickNo, turnStart, newLine) {
+
+    // console.log('newLine: ', newLine);
 
     const PLAYER1 = 'Player 1';
     const PLAYER2 = 'Player 2';
@@ -8,9 +10,9 @@ function resBody(hasMoves, isValid, thisPlayer, thisClickNo, turnStart, line) {
     const playerNo = thisPlayer === 1 ? PLAYER1 : PLAYER2;
     const otherPlayer = thisPlayer === 1 ? PLAYER2 : PLAYER1;
 
-    if(hasMoves === 0){
+    if(movesRemain === 0){
         return {
-            newLine: line,
+            newLine: newLine,
             heading: 'Game Over',
             message: `${otherPlayer} you've lost.`,
         };
@@ -21,12 +23,12 @@ function resBody(hasMoves, isValid, thisPlayer, thisClickNo, turnStart, line) {
     }
     else if(turnStart && isValid){
         message = `${playerNo} end your turn.`;
-        line = null;
+        newLine = null;
     }
 
     else if(turnStart && !isValid){
         message = `That is an invalid start, ${playerNo}`;
-        line = null;
+        newLine = null;
     }
 
     else if(!turnStart && isValid){
@@ -35,11 +37,11 @@ function resBody(hasMoves, isValid, thisPlayer, thisClickNo, turnStart, line) {
 
     else if(!turnStart && !isValid){
         message = `That is an invalid end, ${playerNo}`;
-        line = null;
+        newLine = null;
     }
 
     const stateUpdate = {
-        newLine: line,
+        newLine: newLine,
         heading: playerNo,
         message: message,
     };
