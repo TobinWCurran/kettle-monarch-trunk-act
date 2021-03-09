@@ -8,12 +8,13 @@ function payLoad(options) {
         player,
         thisClickNo,
         turnStart,
-        newLine
+        newLine,
+        reselect
     } = options;
 
     return {
-        msg: resMessage(movesRemain, isValid, thisClickNo, turnStart),
-        body: resBody(movesRemain, isValid, player, thisClickNo, turnStart, newLine),
+        msg: resMessage(movesRemain, isValid, player, thisClickNo, turnStart, reselect),
+        body: resBody(movesRemain, isValid, player, thisClickNo, turnStart, newLine, reselect),
     };
 }
 

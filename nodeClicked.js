@@ -1,4 +1,4 @@
-import { Map } from 'immutable';
+import { List, Map } from 'immutable';
 
 import {
     setClickNo,
@@ -49,7 +49,6 @@ function nodeClicked(req){
     });
 
     let isValid = true;
-
     let payloadOptions = {
         movesRemain: true,
         isValid: isValid,
@@ -77,11 +76,6 @@ function nodeClicked(req){
     const turn = setTurn(clickNo, usedClicks);
     const player = setPlayer(turn);
 
-    console.log('clickNo: ', clickNo);
-    console.log('turnStart: ', turnStart);
-    console.log('turn: ', turn);
-    console.log('player: ', player);
-
     let thisLine = null;
 
     let movesRemain = 1;
@@ -90,7 +84,6 @@ function nodeClicked(req){
 
     // We Need to know if this is the turn start
     if(turnStart){
-        console.log('******************* TURN START **********************');
         // If it's a turn start, it has to be one of the Endpoints.
         // To be an endpoint, it has to be a used node first off.
 
@@ -101,7 +94,6 @@ function nodeClicked(req){
 
                 if(!nodesMatch(thisNode, usedNodes.last().get('node'))){
                     //If this node is not the last node, we need to get the index of the node that was clicked.
-
                     usedNodes = usedNodes.delete(usedIndex(usedNodes, thisNode));
                     usedNodes = usedNodes.push(Map({
                         node: thisNode,
@@ -150,7 +142,42 @@ function nodeClicked(req){
             return payload(payloadOptions);
         }
     } else { //Turn End
-        console.log('******************* TURN END **********************');
+        if(nodesMatch(thisNode, usedNodes.last().get('node'))){
+            let lastUsedNodes = getUsedNodes();
+            let lastUsedClicks = getUsedClicks();
+            let lastRemainingMoves = getRemainingMoves();
+
+            if(lastUsedClicks.size === 1){
+                setUsedClicks(List());
+                setUsedNodes(List());
+                setRemainingMoves(List());
+                return payload({
+                    ...payloadOptions,
+                    player: 0
+                });
+            }else{
+                lastUsedNodes = usedNodes.update(usedIndex(usedNodes, thisNode), (i) => {
+                    return i.set('isEndpoint', true);
+                });
+                lastUsedClicks = lastUsedClicks.delete(lastUsedClicks.lastIndexOf());
+                lastRemainingMoves = lastRemainingMoves.delete(lastRemainingMoves.lastIndexOf());
+                payloadOptions = {
+                    ...payloadOptions,
+                    movesRemain: true,
+                    isValid: true,
+                    player: lastUsedClicks.get('player'),
+                    thisClickNo: lastUsedClicks.get('click'),
+                    turnStart: lastUsedClicks.get('turnStart'),
+                    newLine: null,
+                    reselect: true,
+                };
+                setUsedClicks(lastUsedClicks);
+                setUsedClicks(lastUsedClicks);
+                setUsedNodes(lastUsedNodes);
+                setRemainingMoves(lastRemainingMoves);
+                return payload(payloadOptions);
+            }   
+        }
 
         thisLine = line(usedNodes.last(), thisNode );
 
@@ -159,7 +186,6 @@ function nodeClicked(req){
             isEndpoint: true,
         });
 
-        // There was an error here
         isValid = lastRemainingMoves.findIndex((line) => {
             return nodesMatch(thisLine, line);
         }) === -1 ? false : true;
@@ -201,8 +227,6 @@ function nodeClicked(req){
         turnStart: thisClickToSave.get('turnStart'),
         newLine: thisLine,
     };
-
-
 
     if(isValid){
         setUsedClicks(usedClicks.push(thisClickToSave));

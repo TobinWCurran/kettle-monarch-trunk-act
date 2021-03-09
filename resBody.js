@@ -1,4 +1,4 @@
-function resBody(movesRemain, isValid, thisPlayer, thisClickNo, turnStart, newLine) {
+function resBody(movesRemain, isValid, player, thisClickNo, turnStart, newLine, reselect) {
 
     // console.log('newLine: ', newLine);
 
@@ -7,8 +7,24 @@ function resBody(movesRemain, isValid, thisPlayer, thisClickNo, turnStart, newLi
 
     let message = '';
 
-    const playerNo = thisPlayer === 1 ? PLAYER1 : PLAYER2;
-    const otherPlayer = thisPlayer === 1 ? PLAYER2 : PLAYER1;
+    const playerNo = player === 1 ? PLAYER1 : PLAYER2;
+    const otherPlayer = player === 1 ? PLAYER2 : PLAYER1;
+
+    if(player === 0){
+        return {
+            newLine: null,
+            heading: 'Player 1',
+            message: 'Choose a new start point, Player 1.',
+        };
+    }
+
+    if(reselect){
+        return {
+            heading: playerNo,
+            message: `${playerNo} choose another start point.`,
+            newLine: null,
+        };
+    }
 
     if(movesRemain === 0){
         return {

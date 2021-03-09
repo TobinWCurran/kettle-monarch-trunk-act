@@ -1,7 +1,6 @@
 import { List, Map } from 'immutable';
 
 export default function initialize(){
-    console.log('*************** INITIALIZE ****************');
     const allNodes = List([
         Map({x: 0, y: 0}),
         Map({x: 0, y: 1}),
