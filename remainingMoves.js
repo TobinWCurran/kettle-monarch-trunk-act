@@ -1,4 +1,4 @@
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 
 import line from './line.js';
 import intersects from './intersects.js';
@@ -6,6 +6,8 @@ import intersects from './intersects.js';
 import {
     nodesMatch,
 } from './usedHelpers.js';
+
+
 
 function getEndpoints(usedNodes){
     let endPoints = List();
@@ -18,14 +20,7 @@ function getEndpoints(usedNodes){
     return endPoints;
 }
 
-function remainingMoves(usedNodes, thisNode) {
-    console.log('remainingMoves usedNodes: ', usedNodes.toJS());
-    
-    if(thisNode){
-        console.log('remainingMoves thisNode: ', thisNode.toJS());
-        usedNodes = usedNodes.push(thisNode);
-    }
-    
+function remainingMoves(usedNodes) {
     const getUsedLines = appStore.getUsedLines.bind(appStore);
     let usedLines = getUsedLines();
 
@@ -34,8 +29,9 @@ function remainingMoves(usedNodes, thisNode) {
 
     let endPoints = getEndpoints(usedNodes);
     
-
     let validMoves = List();
+    let validEndpoints = List();
+    let invalidEndpoints = List();
 
     usedNodes.forEach((node) => {
         let foundIndex = allNodes.findIndex((i) => {
@@ -46,13 +42,8 @@ function remainingMoves(usedNodes, thisNode) {
         
     });
 
-    console.log('remainingMoves endPoints: ', endPoints.toJS());
-    console.log('remainingMoves allNodes: ', allNodes.toJS());
-
     endPoints.forEach((endPoint) => {
         allNodes.forEach((node) => {
-            console.log('node: ', node.toJS());
-            console.log('endPoint: ', endPoint.toJS());
             const thisNode = node.toJS();
             const thisEndpoint = endPoint.get('node');
 
@@ -65,13 +56,39 @@ function remainingMoves(usedNodes, thisNode) {
             if(is45 || isHor || isVert) {
                 if (intersects(thisLine, usedLines) === false){
                     validMoves = validMoves.push(thisLine);
+                    validEndpoints = validEndpoints.push(endPoint);
+                }else{
+                    invalidEndpoints = invalidEndpoints.push(endPoint);
                 }
             }
-
         });
     });
-    console.log('remainingMoves validMoves: ', validMoves.toJS());
-    return validMoves;
+
+
+    validEndpoints = validEndpoints.reduce((acc, datum, i) => {
+        if(i=== 0){
+            return acc.push(Map(datum.get('node')));
+        }
+        if(nodesMatch(datum.get('node'), acc.last())){
+            return acc;
+        }
+        return acc.push(Map(datum.get('node')));
+    }, List());
+
+    if(validEndpoints.size === 1 && usedNodes.size > 1){
+        endPoints = endPoints.filter((endPoint) => {
+            if(nodesMatch(validEndpoints.get(0), endPoint.get('node'))){
+                return false;
+            }else{
+                return true;
+            }
+        });
+    }
+
+    return Map({
+        validMoves: validMoves,
+        invalidEndpoint: endPoints.size === 1 ? endPoints.get(0): null,
+    });
 }
 
 export default remainingMoves;

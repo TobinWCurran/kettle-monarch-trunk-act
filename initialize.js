@@ -29,7 +29,6 @@ export default function initialize(){
         _usedClicks: List(),
         _usedLines: List(),
         _usedNodes: List(),
-        _validLines: List(),
         _remainingMoves: List(),
         getAllNodes: function(){
             return this._allNodes;
@@ -51,9 +50,6 @@ export default function initialize(){
         },
         setUsedLines: function(usedLines) {
             this._usedLines = usedLines;
-        },
-        getValidLines: function(){
-            return this._validLines;
         },
         getRemainingMoves: function(){
             return this._remainingMoves;

@@ -18,11 +18,9 @@ import {
 } from './usedHelpers.js';
 
 import fillUsedNodes from './fillUsedNodes.js';
-import getValidLines from './getValidLines.js';
 import remainingMoves from './remainingMoves.js';
 import line from './line.js';
 import payload from './payload.js';
-import validateNode from './validateNode.js';
 
 function nodeClicked(req){
     const { body: thisNode } = req;
@@ -40,8 +38,6 @@ function nodeClicked(req){
     let usedNodes = getUsedNodes();
     let usedLines = getUsedLines();
     let lastRemainingMoves = getRemainingMoves();
-
-    console.log('usedClick: ', usedClicks.toJS());
 
     let thisClickToSave = Map({
         turnStart: true,
@@ -73,7 +69,7 @@ function nodeClicked(req){
             usedClicks = usedClicks.push(thisClickToSave);
             setUsedClicks(usedClicks);
             setUsedNodes(usedNodes);
-            setRemainingMoves(remainingMoves(usedNodes));
+            setRemainingMoves(remainingMoves(usedNodes).get('validMoves'));
             return payload(payloadOptions);
         }
     }
@@ -91,29 +87,21 @@ function nodeClicked(req){
 
     thisNodeToSave = thisNodeToSave.set('isEndpoint', turnStart);
 
-
-    console.log('thisNodeToSave: ', thisNodeToSave.toJS());
-    console.log('turnStart: ', turnStart);
-    
-    // thisNodeToSave = Map({
-    //     node: thisNode,
-    //     isEndpoint: !turnStart,
-    // });
-
-
     // We Need to know if this is the turn start
     if(turnStart){
         console.log('******************* TURN START **********************');
         // If it's a turn start, it has to be one of the Endpoints.
         // To be an endpoint, it has to be a used node first off.
-        console.log('usedNodes: ', usedNodes.toJS());
+
         if(isUsed(usedNodes, thisNode)){
             // is it an Endpoint
 
             if(isEndpoint(usedNodes, thisNode)){
 
                 if(!nodesMatch(thisNode, usedNodes.last().get('node'))){
-                    usedNodes = usedNodes.shift();
+                    //If this node is not the last node, we need to get the index of the node that was clicked.
+
+                    usedNodes = usedNodes.delete(usedIndex(usedNodes, thisNode));
                     usedNodes = usedNodes.push(Map({
                         node: thisNode,
                         isEndpoint: true,
@@ -125,9 +113,7 @@ function nodeClicked(req){
                     isEndpoint: true,
                 });
 
-                console.log('turn start usedNodes: ', usedNodes.toJS());
-                console.log('turn start thisNode: ', thisNode);
-                movesRemain = remainingMoves(usedNodes);
+                movesRemain = remainingMoves(usedNodes).get('validMoves');
 
                 if(movesRemain.size > 0){
                     isValid = true;
@@ -136,6 +122,7 @@ function nodeClicked(req){
                         return i.set('isEndpoint', false);
                     });
                     setRemainingMoves(movesRemain);
+                    setUsedNodes(usedNodes);
                 }
             }else{ // If it's not an endpoint
                 payloadOptions = {
@@ -163,10 +150,8 @@ function nodeClicked(req){
         }
     } else { //Turn End
         console.log('******************* TURN END **********************');
-        console.log('usedNodes: ', usedNodes.toJS());
+
         thisLine = line(usedNodes.last(), thisNode );
-        console.log('thisLine: ', thisLine);
-        console.log('lastRemainingMoves: ',  lastRemainingMoves.toJS());
 
         thisNodeToSave = Map({
             node: thisNode,
@@ -177,56 +162,26 @@ function nodeClicked(req){
             return nodesMatch(thisLine, line);
         }) === -1 ? false : true;
 
-        console.log('isValid: ', isValid);
-
-        // usedNodes = usedNodes.concat(fillUsedNodes(thisLine));
-
-       
-        console.log('usedNodes: ', usedNodes.toJS());
-        // usedNodes = usedNodes.update(usedNodes.lastIndexOf(), (node) => {
-        //     return node.set('isEndpoint', false);
-        // });
-
-        // console.log('usedNodes: ', usedNodes.toJS());
-
         usedNodes = usedNodes.concat(fillUsedNodes(thisLine));
 
-        console.log('concat usedNodes: ', usedNodes.toJS());
-
-        // thisClickToSave = {
-        //     turnStart: turnStart,
-        //     turn: turn,
-        //     click: clickNo,
-        //     player: player,
-        // };
-
         if(isValid){
-            
-            movesRemain = remainingMoves(usedNodes);
+            const theseRemainingMoves = remainingMoves(usedNodes);
+            movesRemain = theseRemainingMoves.get('validMoves');
+            const invalidEndpoint = theseRemainingMoves.get('invalidEndpoint');
 
-            setRemainingMoves(movesRemain);
+            if(invalidEndpoint !== null){
+                usedNodes = usedNodes.update(usedIndex(usedNodes, invalidEndpoint.get('node')), (i) => {
+                    return i.set('isEndpoint', false);
+                });
+            }
+
+            // We need to find out if there is only one start point
+
+            setRemainingMoves(movesRemain.get('validMoves'));
             setUsedLines(usedLines.push(thisLine));
+            setUsedNodes(usedNodes);
         }
 
-        // if(isValid){
-        //     setUsedNodes(usedNodes);
-        //     setUsedClicks(usedClicks.push(Map(thisClickToSave)));
-        //     setRemainingMoves(usedNodes, thisNodeToSave);
-        //     setUsedLines(usedLines.push(thisLine));
-        // }else{
-        //     payloadOptions = {
-        //         ...payloadOptions,
-        //         movesRemain: true,
-        //         isValid: false,
-        //         player: player,
-        //         thisClickNo: clickNo,
-        //         turnStart: turnStart,
-        //         newLine: null,
-        //     };
-        //     return payload(payloadOptions);
-        // }
-
-        
     }
 
     thisClickToSave = Map({
@@ -248,7 +203,6 @@ function nodeClicked(req){
 
 
     if(isValid){
-        setUsedNodes(usedNodes);
         setUsedClicks(usedClicks.push(thisClickToSave));
         
     }else{
