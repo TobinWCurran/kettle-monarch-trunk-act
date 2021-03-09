@@ -159,6 +159,7 @@ function nodeClicked(req){
             isEndpoint: true,
         });
 
+        // There was an error here
         isValid = lastRemainingMoves.findIndex((line) => {
             return nodesMatch(thisLine, line);
         }) === -1 ? false : true;

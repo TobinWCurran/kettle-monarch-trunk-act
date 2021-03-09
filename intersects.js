@@ -1,7 +1,6 @@
 import { checkIntersection } from 'line-intersect';
 
 function intersects(thisLine, usedLines) {
-    // console.log('intersects usedLines: ', usedLines.toJS());
     const usedLinesJS = usedLines.toJS();
 
     const x1 = thisLine.start.x;

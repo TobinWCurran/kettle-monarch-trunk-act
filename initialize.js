@@ -1,29 +1,29 @@
 import { List, Map } from 'immutable';
 
-const allNodes = List([
-    Map({x: 0, y: 0}),
-    Map({x: 0, y: 1}),
-    Map({x: 0, y: 2}),
-    Map({x: 0, y: 3}),
-
-    Map({x: 1, y: 0}),
-    Map({x: 1, y: 1}),
-    Map({x: 1, y: 2}),
-    Map({x: 1, y: 3}),
-
-    Map({x: 2, y: 0}),
-    Map({x: 2, y: 1}),
-    Map({x: 2, y: 2}),
-    Map({x: 2, y: 3}),
-
-    Map({x: 3, y: 0}),
-    Map({x: 3, y: 1}),
-    Map({x: 3, y: 2}),
-    Map({x: 3, y: 3}),
-]);
-
 export default function initialize(){
     console.log('*************** INITIALIZE ****************');
+    const allNodes = List([
+        Map({x: 0, y: 0}),
+        Map({x: 0, y: 1}),
+        Map({x: 0, y: 2}),
+        Map({x: 0, y: 3}),
+    
+        Map({x: 1, y: 0}),
+        Map({x: 1, y: 1}),
+        Map({x: 1, y: 2}),
+        Map({x: 1, y: 3}),
+    
+        Map({x: 2, y: 0}),
+        Map({x: 2, y: 1}),
+        Map({x: 2, y: 2}),
+        Map({x: 2, y: 3}),
+    
+        Map({x: 3, y: 0}),
+        Map({x: 3, y: 1}),
+        Map({x: 3, y: 2}),
+        Map({x: 3, y: 3}),
+    ]);
+
     global.appStore = {
         _allNodes: allNodes,
         _usedClicks: List(),

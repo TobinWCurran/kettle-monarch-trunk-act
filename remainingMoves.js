@@ -3,11 +3,7 @@ import { List, Map } from 'immutable';
 import line from './line.js';
 import intersects from './intersects.js';
 
-import {
-    nodesMatch,
-} from './usedHelpers.js';
-
-
+import { nodesMatch } from './usedHelpers.js';
 
 function getEndpoints(usedNodes){
     let endPoints = List();
