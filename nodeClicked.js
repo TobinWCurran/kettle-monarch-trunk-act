@@ -35,6 +35,7 @@ function nodeClicked(req){
     let usedNodes = getUsedNodes();
     let usedLines = getUsedLines();
     let lastRemainingMoves = getRemainingMoves();
+    let isValid = true;
 
     let thisClickToSave = Map({
         turnStart: true,
@@ -48,7 +49,6 @@ function nodeClicked(req){
         isEndpoint: true,
     });
 
-    let isValid = true;
     let payloadOptions = {
         movesRemain: true,
         isValid: isValid,
@@ -68,8 +68,6 @@ function nodeClicked(req){
             return payload(payloadOptions);
         }
     }
-    
-    // This handles subsequent turns
 
     const clickNo = setClickNo(usedClicks);
     const turnStart = setTurnStart(usedClicks);
@@ -77,23 +75,14 @@ function nodeClicked(req){
     const player = setPlayer(turn);
 
     let thisLine = null;
-
     let movesRemain = 1;
 
     thisNodeToSave = thisNodeToSave.set('isEndpoint', turnStart);
 
-    // We Need to know if this is the turn start
     if(turnStart){
-        // If it's a turn start, it has to be one of the Endpoints.
-        // To be an endpoint, it has to be a used node first off.
-
         if(isUsed(usedNodes, thisNode)){
-            // is it an Endpoint
-
             if(isEndpoint(usedNodes, thisNode)){
-
                 if(!nodesMatch(thisNode, usedNodes.last().get('node'))){
-                    //If this node is not the last node, we need to get the index of the node that was clicked.
                     usedNodes = usedNodes.delete(usedIndex(usedNodes, thisNode));
                     usedNodes = usedNodes.push(Map({
                         node: thisNode,
@@ -117,7 +106,7 @@ function nodeClicked(req){
                     setRemainingMoves(movesRemain);
                     setUsedNodes(usedNodes);
                 }
-            }else{ // If it's not an endpoint
+            }else{
                 payloadOptions = {
                     ...payloadOptions,
                     movesRemain: true,
@@ -141,7 +130,7 @@ function nodeClicked(req){
             };
             return payload(payloadOptions);
         }
-    } else { //Turn End
+    } else {
         if(nodesMatch(thisNode, usedNodes.last().get('node'))){
             let lastUsedNodes = getUsedNodes();
             let lastUsedClicks = getUsedClicks();
@@ -202,8 +191,6 @@ function nodeClicked(req){
                     return i.set('isEndpoint', false);
                 });
             }
-
-            // We need to find out if there is only one start point
 
             setRemainingMoves(movesRemain.get('validMoves'));
             setUsedLines(usedLines.push(thisLine));
