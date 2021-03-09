@@ -10,15 +10,11 @@ function setPlayer(turn) {
 }
 
 function setTurn(thisClickNo, usedClicks) {
-    if(thisClickNo <= 2){
-        return 1;
-    }
-    return thisClickNo%2 === 0 ? usedClicks.last().get('turn') : usedClicks.last().get('turn') + 1;
+    return thisClickNo%2 === 0 ? usedClicks.last().get('turn') + 1 : usedClicks.last().get('turn');
 }
 
 function setTurnStart(usedClicks) {
     if((usedClicks.last().get('click')) % 2 === 0){
-        
         return true;
     }
     return false;
