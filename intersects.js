@@ -1,7 +1,4 @@
-import {
-    checkIntersection,
-    colinearPointWithinSegment
-} from 'line-intersect';
+import { checkIntersection } from 'line-intersect';
 
 function intersects(thisLine, usedLines) {
     // console.log('intersects usedLines: ', usedLines.toJS());
@@ -13,7 +10,6 @@ function intersects(thisLine, usedLines) {
     const y2 = thisLine.end.y;
 
     const Line1Endpoint1 = { x: x1, y: y1 };
-    const Line1Endpoint2 = {x: x2, y: y2};
 
     let toReturn = false;
 
@@ -23,14 +19,7 @@ function intersects(thisLine, usedLines) {
         let x4 = usedLinesJS[i].end.x;
         let y4 = usedLinesJS[i].end.y;
 
-        // const Line2Endpoint1 = { x: x3, y: y3 };
-        // const Line2Endpoint2 = {x: x4, y: y4};
         let thisIntersect = checkIntersection(x1, y1, x2, y2, x3, y3, x4, y4);
-        // console.log('Line1Endpoint1: ', Line1Endpoint1);
-        // console.log('Line1Endpoint2: ', Line1Endpoint2);
-        // console.log('Line2Endpoint1: ', Line2Endpoint1);
-        // console.log('Line2Endpoint2: ', Line2Endpoint2);
-        // console.log('thisIntersect: ', thisIntersect);
 
         if(thisIntersect.type === 'none'){
             toReturn = false;
@@ -41,29 +30,6 @@ function intersects(thisLine, usedLines) {
                 toReturn = true;
                 break;
             }
-        // }else if(thisIntersect.type === 'colinear'){
-            // if(colinearPointWithinSegment(Line1Endpoint1, x3, y3, x4, y4)){
-            //     toReturn = true;
-            //     break;
-            // }
-            // if(colinearPointWithinSegment(Line1Endpoint2, x3, y3, x4, y4)){
-            //     toReturn = true;
-            //     break;
-            // }
-
-            // if(colinearPointWithinSegment(Line2Endpoint1, x3, y3, x4, y4)){
-            //     toReturn = true;
-            //     break;
-            // }
-
-            // if(colinearPointWithinSegment(Line2Endpoint2, x3, y3, x4, y4)){
-            //     toReturn = true;
-            //     break;
-            // }
-            
-            // else{
-            //     toReturn = false;
-            // }
         }
     }
 

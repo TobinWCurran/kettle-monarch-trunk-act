@@ -1,13 +1,10 @@
-import { List, Map } from 'immutable';
+import { Map } from 'immutable';
 
 import {
     setClickNo,
-    setLastClick,
-    setLastTurn,
     setPlayer,
     setTurnStart,
     setTurn,
-    setUsedIndex,
 } from './nodeClickedSetters.js';
 
 import {
@@ -62,7 +59,6 @@ function nodeClicked(req){
         newLine: null,
     };
  
-    // This Hanldes the first turn
     if(usedLines.size === 0){
         if(usedNodes.size === 0){
             usedNodes = usedNodes.push(thisNodeToSave);
@@ -80,6 +76,11 @@ function nodeClicked(req){
     const turnStart = setTurnStart(usedClicks);
     const turn = setTurn(clickNo, usedClicks);
     const player = setPlayer(turn);
+
+    console.log('clickNo: ', clickNo);
+    console.log('turnStart: ', turnStart);
+    console.log('turn: ', turn);
+    console.log('player: ', player);
 
     let thisLine = null;
 
@@ -204,7 +205,6 @@ function nodeClicked(req){
 
     if(isValid){
         setUsedClicks(usedClicks.push(thisClickToSave));
-        
     }else{
         payloadOptions = {
             ...payloadOptions,
