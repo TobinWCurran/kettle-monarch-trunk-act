@@ -30,7 +30,7 @@ function resBody(movesRemain, isValid, player, thisClickNo, turnStart, newLine, 
         return {
             newLine: newLine,
             heading: 'Game Over',
-            message: `${otherPlayer} you've lost.`,
+            message: `${playerNo} you've lost.`,
         };
     }
 
