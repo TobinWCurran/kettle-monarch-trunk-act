@@ -154,13 +154,12 @@ function nodeClicked(req){
                     ...payloadOptions,
                     movesRemain: true,
                     isValid: true,
-                    player: lastUsedClicks.get('player'),
-                    thisClickNo: lastUsedClicks.get('click'),
-                    turnStart: lastUsedClicks.get('turnStart'),
+                    player: lastUsedClicks.last().get('player'),
+                    thisClickNo: lastUsedClicks.last().get('click'),
+                    turnStart: lastUsedClicks.last().get('turnStart'),
                     newLine: null,
                     reselect: true,
                 };
-                setUsedClicks(lastUsedClicks);
                 setUsedClicks(lastUsedClicks);
                 setUsedNodes(lastUsedNodes);
                 setRemainingMoves(lastRemainingMoves);
@@ -210,7 +209,7 @@ function nodeClicked(req){
         movesRemain: movesRemain.size,
         isValid: isValid,
         player: thisClickToSave.get('player'),
-        thisClickNo: thisClickToSave.get('clickNo'),
+        thisClickNo: thisClickToSave.get('click'),
         turnStart: thisClickToSave.get('turnStart'),
         newLine: thisLine,
     };
